@@ -103,9 +103,29 @@
       line-height: 1.8;
     }
 
+
+        /* 新增背景canvas样式 */
+    #background-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;  /* 不阻挡鼠标事件 */
+      z-index: 0;
+      background-color: var(--bg-color);
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: transparent;
+    }
+
   </style>
 </head>
 <body>
+  <canvas id="background-canvas"></canvas>
   <div class="container">
     <div class="header">
       <div style="display: flex; align-items: center;">
@@ -260,5 +280,65 @@
       document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
     }
   </script>
+
+  <script>
+    // 你的动画脚本（js部分）
+    (() => {
+      const canvas = document.getElementById('background-canvas');
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const count = 20000;
+      const points = [];
+      for(let i=0; i<count; i++){
+        const x = i % 100;
+        const y = Math.floor(i / 100);
+        const k = x / 4 - 12.5;
+        const e = y / 9 + 5;
+        const o = Math.sqrt(k*k + e*e) / 9;
+        points.push({x, y, k, e, o});
+      }
+
+      let t = 0;
+
+      function draw(){
+        t += Math.PI / 90;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+
+        points.forEach(({x, y, k, e, o}) => {
+          let tanVal = (k !== 0) ? Math.tan(1 / k) : 0;
+          let q = x + 99 + tanVal + o * k * (Math.cos(e * 9)/4 + Math.cos(y/2)) * Math.sin(o * 4 - t);
+          let c = o * e / 30 - t / 8;
+
+          let px = (q * 0.7 * Math.sin(c)) + 9 * Math.cos(y / 19 + t) + window.innerWidth/2;
+          let py = window.innerHeight/2 + (q / 2 * Math.cos(c));
+
+          ctx.moveTo(px, py);
+          ctx.arc(px, py, 1, 0, Math.PI * 2);
+        });
+
+        ctx.fill();
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    })();
+  </script>
+
+  
 </body>
 </html>
