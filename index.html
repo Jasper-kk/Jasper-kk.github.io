@@ -280,62 +280,62 @@
       document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
     }
   </script>
-
-  <script>
-  (() => {
-    const canvas = document.getElementById('background-canvas');
-    const ctx = canvas.getContext('2d');
   
-    function resize() {
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(devicePixelRatio, devicePixelRatio);
-    }
-    resize();
-    window.addEventListener('resize', resize);
-  
-    // 初始化点阵
-    const count = 10000;
-    const points = [];
-    for (let i = 0; i < count; i++) {
-      const x = i;
-      const y = i / 235;
-      const e = y / 8 - 13;
-      points.push({ x, y, e });
-    }
-  
-    let t = 0;
-  
-    function draw() {
-      t += Math.PI / 240;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.beginPath();
-  
-      points.forEach(({ x, y, e }) => {
-        const k = (4 + Math.sin(y * 2 - t) * 3) * Math.cos(x / 29);
-        const d = Math.hypot(k, e);
-        const q = 3 * Math.sin(k * 2) + 0.3 / k + Math.sin(y / 25) * k * (9 + 4 * Math.sin(e * 9 - d * 3 + t * 2));
-  
-        const px = q + 30 * Math.cos(d - t) + 200;
-        const py = 620 - q * Math.sin(d - t) - d * 39;
-  
-        ctx.moveTo(px, py);
-        ctx.arc(px, py, 1, 0, Math.PI * 2);
-      });
-  
-      ctx.fill();
-  
-      requestAnimationFrame(draw);
-    }
-  
-    draw();
-  })();
-  </script>
+    <script>
+    (() => {
+      const canvas = document.getElementById('background-canvas');
+      const ctx = canvas.getContext('2d');
+    
+      function resize() {
+        canvas.width = window.innerWidth * devicePixelRatio;
+        canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+    
+      // 初始化点阵
+      const count = 10000;
+      const points = [];
+      for (let i = 0; i < count; i++) {
+        const x = i;
+        const y = i / 235;
+        const e = y / 8 - 13;
+        points.push({ x, y, e });
+      }
+    
+      let t = 0;
+    
+      function draw() {
+        t += Math.PI / 240;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+    
+        points.forEach(({ x, y, e }) => {
+          const k = (4 + Math.sin(y * 2 - t) * 3) * Math.cos(x / 29);
+          const d = Math.hypot(k, e);
+          const q = 3 * Math.sin(k * 2) + 0.3 / k + Math.sin(y / 25) * k * (9 + 4 * Math.sin(e * 9 - d * 3 + t * 2));
+    
+          const px = q + 30 * Math.cos(d - t) + 200;
+          const py = 620 - q * Math.sin(d - t) - d * 39;
+    
+          ctx.moveTo(px, py);
+          ctx.arc(px, py, 1, 0, Math.PI * 2);
+        });
+    
+        ctx.fill();
+    
+        requestAnimationFrame(draw);
+      }
+    
+      draw();
+    })();
+    </script>
 
   
 </body>
