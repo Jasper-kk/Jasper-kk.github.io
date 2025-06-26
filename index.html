@@ -321,8 +321,11 @@
           const d = Math.hypot(k, e);
           const q = 3 * Math.sin(k * 2) + 0.3 / k + Math.sin(y / 25) * k * (9 + 4 * Math.sin(e * 9 - d * 3 + t * 2));
     
-          const px = q + 30 * Math.cos(d - t) + 200;
-          const py = 620 - q * Math.sin(d - t) - d * 39;
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          
+          const px = centerX + q + 30 * Math.cos(d - t);
+          const py = centerY - q * Math.sin(d - t) - d * 39;
     
           ctx.moveTo(px, py);
           ctx.arc(px, py, 1, 0, Math.PI * 2);
