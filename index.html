@@ -5,271 +5,466 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Xikai Tang</title>
   <link rel="icon" type="image/x-icon" href="images/logo.ico" />
+
   <style>
     :root {
       --bg-color: #fafafa;
-      --text-color: #222;
-      --link-color: #0066cc;
-      --card-bg: #fff;
-      --shadow: rgba(0, 0, 0, 0.05);
+      --text-color: #1f2328;
+      --muted-color: #5b6472;
+      --link-color: #0b5fd7;
+
+      --card-bg: #ffffff;
+      --border: rgba(0,0,0,0.06);
+      --shadow: rgba(0, 0, 0, 0.06);
+
+      --radius: 14px;
+      --maxw: 920px;
+
+      /* 背景粒子颜色（浅色主题） */
+      --bg-particles: rgba(20, 25, 31, 0.08);
     }
 
     [data-theme="dark"] {
-      --bg-color: #1e1e1e;
-      --text-color: #e4e4e4;
-      --link-color: #4ea1ff;
-      --card-bg: #2a2a2a;
-      --shadow: rgba(255, 255, 255, 0.05);
+      --bg-color: #0f1115;
+      --text-color: #e7eaf0;
+      --muted-color: #a7b0bf;
+      --link-color: #6bb3ff;
+
+      --card-bg: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.10);
+      --shadow: rgba(0, 0, 0, 0.35);
+
+      /* 背景粒子颜色（深色主题） */
+      --bg-particles: rgba(255, 255, 255, 0.12);
     }
 
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
       margin: 0;
       background-color: var(--bg-color);
       color: var(--text-color);
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      line-height: 1.65;
     }
 
     a {
       color: var(--link-color);
       text-decoration: none;
     }
-    a:hover {
-      text-decoration: underline;
-    }
+    a:hover { text-decoration: underline; }
 
-    .container {
-      max-width: 850px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-name {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .theme-toggle {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: var(--text-color);
-    }
-
-    h2 {
-      margin-top: 50px;
-      margin-bottom: 15px;
-      font-weight: 700;
-      font-size: 24px;
-    }
-
-    .publication {
-      display: flex;
-      gap: 20px;
-      margin-top: 20px;
-      padding: 16px;
-      background-color: var(--card-bg);
-      box-shadow: 0 2px 6px var(--shadow);
-      border-radius: 10px;
-      transition: background-color 0.3s;
-    }
-
-    .publication img {
-      width: 160px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .pub-text {
-      flex: 1;
-    }
-
-    .papertitle {
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    /* Activities 列表排版 */
-    .activities-list {
-      margin-top: 10px;
-      padding-left: 20px;
-      line-height: 1.8;
-    }
-
-
-        /* 新增背景canvas样式 */
+    /* 背景 Canvas */
     #background-canvas {
       position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      pointer-events: none;  /* 不阻挡鼠标事件 */
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
       z-index: 0;
       background-color: var(--bg-color);
     }
 
-    .container {
+    /* 容器与布局层 */
+    .page {
       position: relative;
       z-index: 10;
-      max-width: 850px;
+      max-width: var(--maxw);
       margin: 0 auto;
-      padding: 20px;
-      background-color: transparent;
+      padding: 22px 18px 60px;
     }
 
+    /* 顶部 Header（粘性） */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg-color) 88%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 210px;
+    }
+
+    .brand img {
+      height: 42px;
+      width: 42px;
+      border-radius: 10px;
+    }
+
+    .brand .name {
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav a {
+      font-size: 14px;
+      color: var(--muted-color);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .nav a:hover {
+      color: var(--text-color);
+      text-decoration: none;
+      border-color: var(--border);
+      background: color-mix(in srgb, var(--card-bg) 55%, transparent);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 90px;
+      justify-content: flex-end;
+    }
+
+    .theme-toggle {
+      background: color-mix(in srgb, var(--card-bg) 70%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--text-color);
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+
+    /* 首屏简介卡 */
+    .hero {
+      margin-top: 18px;
+      padding: 18px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+      box-shadow: 0 10px 28px var(--shadow);
+    }
+
+    .hero p {
+      margin: 10px 0;
+      color: var(--text-color);
+    }
+
+    .hero .links {
+      margin-top: 12px;
+      text-align: center;
+      color: var(--muted-color);
+      font-size: 14px;
+    }
+
+    .hero .links a { font-weight: 600; }
+
+    /* Section 标题 */
+    section { scroll-margin-top: 84px; }
+
+    h2 {
+      margin-top: 44px;
+      margin-bottom: 14px;
+      font-weight: 850;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+
+    .subnote {
+      margin: 0 0 16px;
+      color: var(--muted-color);
+      font-size: 14px;
+    }
+
+    /* Publications 卡片 */
+    .publication {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 18px;
+      margin-top: 16px;
+      padding: 16px;
+      background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 26px var(--shadow);
+      border-radius: var(--radius);
+      transition: transform 0.18s ease, background-color 0.25s ease;
+    }
+
+    .publication:hover { transform: translateY(-1px); }
+
+    .publication img {
+      width: 170px;
+      height: 110px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.02);
+    }
+
+    .pub-text { min-width: 0; }
+
+    .papertitle {
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 1.35;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .pub-meta {
+      color: var(--muted-color);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .pub-actions a {
+      display: inline-block;
+      margin-top: 8px;
+      font-weight: 650;
+      font-size: 14px;
+    }
+
+    /* Activities 列表 */
+    .activities-list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.9;
+      color: var(--text-color);
+    }
+
+    /* Footer（可选，纯样式不改信息） */
+    .footer-space {
+      margin-top: 46px;
+      color: var(--muted-color);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* 响应式：移动端改为纵向卡片 */
+    @media (max-width: 720px) {
+      .brand { min-width: unset; }
+      .nav { display: none; } /* 小屏先简化；如你想保留可去掉这行 */
+      .publication {
+        grid-template-columns: 1fr;
+      }
+      .publication img {
+        width: 100%;
+        height: 160px;
+      }
+      .hero { padding: 16px; }
+    }
   </style>
 </head>
+
 <body>
   <canvas id="background-canvas"></canvas>
-  <div class="container">
-    <div class="header">
-      <div style="display: flex; align-items: center;">
-        <img src="images/logo.ico" alt="Logo" style="height:50px;" />
-        <div class="header-name" style="margin-left: 10px;">XIKAI TANG</div>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="images/logo.ico" alt="Logo" />
+        <div class="name">XIKAI TANG</div>
       </div>
-      <button class="theme-toggle" onclick="toggleTheme()">
-        <span id="theme-icon">🌙</span>
-      </button>
-    </div>
 
-    <p>
-      I am currently a Ph.D student in Software Engineering at the
-      <a href="https://www.uestc.edu.cn/">University of Electronic Science and Technology of China</a>.
-    </p>
+      <!-- 页内导航（不新增信息，只是跳转到你已有内容区块） -->
+      <nav class="nav" aria-label="Primary">
+        <a href="#bio">Bio</a>
+        <a href="#publications">Publications</a>
+        <a href="#activities">Activities</a>
+      </nav>
 
-    <p>
-      I received my MASc from the Department of Electrical and Computer Engineering,
-      <a href="https://uwaterloo.ca/">University of Waterloo</a>, advised by
-      Prof. <a href="https://ece.uwaterloo.ca/~dban/">Dayan Ban</a> and
-      Prof. <a href="https://ece.uwaterloo.ca/~z70wang/">Zhou Wang</a>.
-    </p>
-
-    <p>
-      My research interests lie broadly in computer vision, deep learning, and 3D representation learning.
-    </p>
-
-    <p style="text-align:center">
-      <a href="https://scholar.google.com/citations?user=mcVaJMUAAAAJ">Google Scholar</a> &nbsp;/&nbsp;
-      <a href="https://github.com/Jasper-kk">GitHub</a>
-    </p>
-
-    <h2>Publications</h2>
-    <p>* indicates equal contribution</p>
-
-    <!-- VPNeXt -->
-    <div class="publication">
-      <img src="images/vit.jpg" alt="VPNeXt image" />
-      <div class="pub-text">
-        <span class="papertitle">VPNeXt: Rethinking Dense Decoding for Plain Vision Transformer</span><br />
-        <strong>Xikai Tang</strong>, Ye Huang*, Guangqiang Yin, Lixin Duan (*Corresponding author)<br />
-        <em>arXiv preprint, tech report, 2025</em><br />
-        <a href="https://arxiv.org/abs/2502.16654">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- Point-A -->
-    <div class="publication">
-      <img src="images/pointa.png" alt="Point-A image" />
-      <div class="pub-text">
-        <span class="papertitle">Point-A: Memory Channel Attention-based Network for 3D Point Clouds</span><br />
-        <em>Coming soon, 2024</em>
-      </div>
-    </div>
-
-    <!-- MI3D -->
-    <div class="publication">
-      <img src="images/mi3d.png" alt="MI3D image" />
-      <div class="pub-text">
-        <span class="papertitle">Semantic 2D-3D Data under Multi-Illuminance for Indoor Scene Understanding</span><br />
-        <em>Coming soon, 2024</em>
-      </div>
-    </div>
-
-    <!-- CyclicStyleGAN -->
-    <div class="publication">
-      <img src="images/Cyclicstylega.png" alt="CyclicStyleGAN image" />
-      <div class="pub-text">
-        <span class="papertitle">Cyclic Style Generative Adversarial Network for Near Infrared and Visible Light Face Recognition</span><br />
-        Fangzheng Huang, <strong>Xikai Tang</strong>, Chao Li, Dayan Ban<br />
-        <em>Applied Soft Computing, 2024</em><br />
-        <a href="https://www.sciencedirect.com/science/article/abs/pii/S1568494623011146">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- SCA-Net -->
-    <div class="publication">
-      <img src="images/scanet.png" alt="SCA-Net image" />
-      <div class="pub-text">
-        <span class="papertitle">SCA-Net: Spatial and Channel Attention-based Network for 3D Point Clouds</span><br />
-        <strong>Xikai Tang</strong>*, Karim Habashy, Fangzheng Huang, Chao Li, Dayan Ban<br />
-        <em>Computer Vision and Image Understanding, 2023</em><br />
-        <a href="https://www.sciencedirect.com/science/article/pii/S107731422300070X">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- Point Cloud Survey -->
-    <div class="publication">
-      <img src="images/surveysmall.png" alt="Point Cloud Survey image" />
-      <div class="pub-text">
-        <span class="papertitle">A Survey on End-to-End Point Cloud Learning</span><br />
-        <strong>Xikai Tang</strong>*, Fangzheng Huang, Chao Li, Dayan Ban<br />
-        <em>IET Image Processing, 2023</em><br />
-        <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/ipr2.12729">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- Near IR Survey -->
-    <div class="publication">
-      <img src="images/Nearsurvey.png" alt="NIR Survey image" />
-      <div class="pub-text">
-        <span class="papertitle">Near-infrared and Visible Light Face Recognition: A Comprehensive Survey</span><br />
-        Fangzheng Huang, <strong>Xikai Tang</strong>, Chao Li, Dayan Ban<br />
-        <em>Soft Computing, 2023</em><br />
-        <a href="https://link.springer.com/article/10.1007/s00500-023-08366-8">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- PAR Transformer -->
-    <div class="publication">
-      <img src="images/FCT.png" alt="Pedestrian Attribute Recognition image" />
-      <div class="pub-text">
-        <span class="papertitle">Pedestrian Attribute Recognition with Feature Combination in Transformer with Attention Model</span><br />
-        <strong>Xikai Tang</strong>, Zhikun Lin, Yiran Wang<br />
-        <em>6th International Technical Conference on Advances in Computing, Control and Industrial Engineering (CCIE), 2021</em><br />
-        <a href="https://link.springer.com/chapter/10.1007/978-981-19-3927-3_49">[Paper]</a>
-      </div>
-    </div>
-
-    <!-- Activities -->
-    <h2>Activities</h2>
-
-    <div class="publication">
-      <div style="width: 160px; flex-shrink: 0;"></div>
-      <div class="pub-text">
-        <ul class="activities-list">
-          <li><strong>Reviewer</strong> for <a href="https://2024.ieeeicme.org/">ICME</a></li>
-          
-          <!-- 可以继续添加活动 -->
-        </ul>
+      <div class="actions">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span id="theme-icon">🌙</span>
+        </button>
       </div>
     </div>
   </div>
+
+  <main class="page">
+    <!-- Bio -->
+    <section id="bio" class="hero">
+      <p>
+        I am currently a Ph.D student in Software Engineering at the
+        <a href="https://www.uestc.edu.cn/">University of Electronic Science and Technology of China</a>.
+      </p>
+
+      <p>
+        I received my MASc from the Department of Electrical and Computer Engineering,
+        <a href="https://uwaterloo.ca/">University of Waterloo</a>, advised by
+        Prof. <a href="https://ece.uwaterloo.ca/~dban/">Dayan Ban</a> and
+        Prof. <a href="https://ece.uwaterloo.ca/~z70wang/">Zhou Wang</a>.
+      </p>
+
+      <p>
+        My research interests lie broadly in computer vision, deep learning, and 3D representation learning.
+      </p>
+
+      <p class="links">
+        <a href="https://scholar.google.com/citations?user=mcVaJMUAAAAJ">Google Scholar</a>
+        &nbsp;/&nbsp;
+        <a href="https://github.com/Jasper-kk">GitHub</a>
+      </p>
+    </section>
+
+    <!-- Publications -->
+    <section id="publications">
+      <h2>Publications</h2>
+      <p class="subnote">* indicates equal contribution</p>
+
+      <!-- VPNeXt -->
+      <div class="publication">
+        <img src="images/vit.jpg" alt="VPNeXt image" />
+        <div class="pub-text">
+          <span class="papertitle">VPNeXt: Rethinking Dense Decoding for Plain Vision Transformer</span><br />
+          <strong>Xikai Tang</strong>, Ye Huang*, Guangqiang Yin, Lixin Duan (*Corresponding author)<br />
+          <div class="pub-meta"><em>arXiv preprint, tech report, 2025</em></div>
+          <div class="pub-actions">
+            <a href="https://arxiv.org/abs/2502.16654">[Paper]</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Point-A -->
+      <div class="publication">
+        <img src="images/pointa.png" alt="Point-A image" />
+        <div class="pub-text">
+          <span class="papertitle">Point-A: Memory Channel Attention-based Network for 3D Point Clouds</span><br />
+          <div class="pub-meta"><em>Coming soon, 2024</em></div>
+        </div>
+      </div>
+
+      <!-- MI3D -->
+      <div class="publication">
+        <img src="images/mi3d.png" alt="MI3D image" />
+        <div class="pub-text">
+          <span class="papertitle">Semantic 2D-3D Data under Multi-Illuminance for Indoor Scene Understanding</span><br />
+          <div class="pub-meta"><em>Coming soon, 2024</em></div>
+        </div>
+      </div>
+
+      <!-- CyclicStyleGAN -->
+      <div class="publication">
+        <img src="images/Cyclicstylega.png" alt="CyclicStyleGAN image" />
+        <div class="pub-text">
+          <span class="papertitle">Cyclic Style Generative Adversarial Network for Near Infrared and Visible Light Face Recognition</span><br />
+          Fangzheng Huang, <strong>Xikai Tang</strong>, Chao Li, Dayan Ban<br />
+          <div class="pub-meta"><em>Applied Soft Computing, 2024</em></div>
+          <div class="pub-actions">
+            <a href="https://www.sciencedirect.com/science/article/abs/pii/S1568494623011146">[Paper]</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCA-Net -->
+      <div class="publication">
+        <img src="images/scanet.png" alt="SCA-Net image" />
+        <div class="pub-text">
+          <span class="papertitle">SCA-Net: Spatial and Channel Attention-based Network for 3D Point Clouds</span><br />
+          <strong>Xikai Tang</strong>*, Karim Habashy, Fangzheng Huang, Chao Li, Dayan Ban<br />
+          <div class="pub-meta"><em>Computer Vision and Image Understanding, 2023</em></div>
+          <div class="pub-actions">
+            <a href="https://www.sciencedirect.com/science/article/pii/S107731422300070X">[Paper]</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Point Cloud Survey -->
+      <div class="publication">
+        <img src="images/surveysmall.png" alt="Point Cloud Survey image" />
+        <div class="pub-text">
+          <span class="papertitle">A Survey on End-to-End Point Cloud Learning</span><br />
+          <strong>Xikai Tang</strong>*, Fangzheng Huang, Chao Li, Dayan Ban<br />
+          <div class="pub-meta"><em>IET Image Processing, 2023</em></div>
+          <div class="pub-actions">
+            <a href="https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/ipr2.12729">[Paper]</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Near IR Survey -->
+      <div class="publication">
+        <img src="images/Nearsurvey.png" alt="NIR Survey image" />
+        <div class="pub-text">
+          <span class="papertitle">Near-infrared and Visible Light Face Recognition: A Comprehensive Survey</span><br />
+          Fangzheng Huang, <strong>Xikai Tang</strong>, Chao Li, Dayan Ban<br />
+          <div class="pub-meta"><em>Soft Computing, 2023</em></div>
+          <div class="pub-actions">
+            <a href="https://link.springer.com/article/10.1007/s00500-023-08366-8">[Paper]</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAR Transformer -->
+      <div class="publication">
+        <img src="images/FCT.png" alt="Pedestrian Attribute Recognition image" />
+        <div class="pub-text">
+          <span class="papertitle">Pedestrian Attribute Recognition with Feature Combination in Transformer with Attention Model</span><br />
+          <strong>Xikai Tang</strong>, Zhikun Lin, Yiran Wang<br />
+          <div class="pub-meta"><em>6th International Technical Conference on Advances in Computing, Control and Industrial Engineering (CCIE), 2021</em></div>
+          <div class="pub-actions">
+            <a href="https://link.springer.com/chapter/10.1007/978-981-19-3927-3_49">[Paper]</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Activities -->
+    <section id="activities">
+      <h2>Activities</h2>
+
+      <div class="publication">
+        <div></div>
+        <div class="pub-text">
+          <ul class="activities-list">
+            <li><strong>Reviewer</strong> for <a href="https://2024.ieeeicme.org/">ICME</a></li>
+            <!-- 可以继续添加活动 -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-space"></div>
+  </main>
 
   <script>
     const userTheme = localStorage.getItem('theme');
     const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+    function syncThemeIcon(theme) {
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
     if (userTheme) {
       document.documentElement.setAttribute('data-theme', userTheme);
-      document.getElementById('theme-icon').textContent = userTheme === 'dark' ? '☀️' : '🌙';
+      syncThemeIcon(userTheme);
     } else if (systemDark) {
       document.documentElement.setAttribute('data-theme', 'dark');
-      document.getElementById('theme-icon').textContent = '☀️';
+      syncThemeIcon('dark');
     }
 
     function toggleTheme() {
@@ -277,69 +472,90 @@
       const newTheme = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      syncThemeIcon(newTheme);
     }
   </script>
-  
-    <script>
+
+  <script>
     (() => {
       const canvas = document.getElementById('background-canvas');
-      const ctx = canvas.getContext('2d');
-    
+      const ctx = canvas.getContext('2d', { alpha: true });
+
       function resize() {
-        canvas.width = window.innerWidth * devicePixelRatio;
-        canvas.height = window.innerHeight * devicePixelRatio;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
         canvas.style.width = window.innerWidth + 'px';
         canvas.style.height = window.innerHeight + 'px';
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.scale(devicePixelRatio, devicePixelRatio);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
       resize();
       window.addEventListener('resize', resize);
-    
-      // 初始化点阵
-      const count = 20000;
-      const points = [];
-      for (let i = 0; i < count; i++) {
-        const x = i;
-        const y = i / 235;
-        const e = y / 8 - 13;
-        points.push({ x, y, e });
+
+      // 自适应点数：既保留你原有风格，又避免 20000 点在部分设备过重
+      function getCount() {
+        const area = window.innerWidth * window.innerHeight;
+        if (area < 500_000) return 5000;
+        if (area < 1_000_000) return 8000;
+        return 12000;
       }
-    
+
+      let points = [];
+      function initPoints() {
+        const count = getCount();
+        points = [];
+        for (let i = 0; i < count; i++) {
+          const x = i;
+          const y = i / 235;
+          const e = y / 8 - 13;
+          points.push({ x, y, e });
+        }
+      }
+      initPoints();
+      window.addEventListener('resize', initPoints);
+
       let t = 0;
-    
+
+      function cssVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      }
+
       function draw() {
         t += Math.PI / 240;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // 跟随主题变量
+        ctx.fillStyle = cssVar('--bg-particles');
         ctx.beginPath();
-    
-        points.forEach(({ x, y, e }) => {
+
+        const centerX = w / 2;
+        const centerY = h / 2;
+
+        for (const { x, y, e } of points) {
           const k = (4 + Math.sin(y * 2 - t) * 3) * Math.cos(x / 29);
           const d = Math.hypot(k, e);
-          const q = 3 * Math.sin(k * 2) + 0.3 / k + Math.sin(y / 25) * k * (9 + 4 * Math.sin(e * 9 - d * 3 + t * 2));
-    
-          const centerX = window.innerWidth / 2;
-          const centerY = window.innerHeight / 2;
-          
+
+          // 避免极小 k 导致 0.3/k 数值爆炸
+          const kk = Math.abs(k) < 0.04 ? (k < 0 ? -0.04 : 0.04) : k;
+
+          const q = 3 * Math.sin(kk * 2) + 0.3 / kk + Math.sin(y / 25) * kk * (9 + 4 * Math.sin(e * 9 - d * 3 + t * 2));
           const px = centerX + q + 30 * Math.cos(d - t);
           const py = centerY - q * Math.sin(d - t) - d * 39;
-    
+
           ctx.moveTo(px, py);
           ctx.arc(px, py, 1, 0, Math.PI * 2);
-        });
-    
+        }
+
         ctx.fill();
-    
         requestAnimationFrame(draw);
       }
-    
+
       draw();
     })();
-    </script>
-
-  
+  </script>
 </body>
 </html>
